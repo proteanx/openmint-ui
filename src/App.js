@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
-import { ethers } from "ethers";
-import { JsonRpcProvider } from "@ethersproject/providers";
 import OpenMint from "./abi/OpenMint.json";
-//import OpenMintInterface from './components/OpenMint';
+import { ethers } from "ethers";
+
+//const ethers = require("ethers")
 
 const TWITTER_HANDLE = 'proteanx';
 const TWITTER_LINK = `https://twitter.com/proteanx_`;
 const CONTRACT_ADDRESS = '0x0F50Ebb1EB98623147a5d8665f6A39f07cC22955';
+
 
 const App = () => {
 
@@ -70,7 +71,7 @@ const askContractToMint = async () => {
 
     console.log("Ethereum object found:", ethereum);
 
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = provider.getSigner();
     const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMint.abi, signer);
 
