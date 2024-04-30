@@ -62,29 +62,37 @@ const askContractToMint = async () => {
   try {
     const { ethereum } = window;
 
-    if (ethereum) {
-      const provider = new JsonRpcProvider();
-      const signer = provider.getSigner();
-      const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMint.abi, signer);
-
-      console.log("Going to pop wallet now to pay gas...")
-      let mintTxn = await connectedContract.publicMint();
-
-      console.log("Minting...please wait.")
-      await mintTxn.wait();
-      
-      console.log(`Mined, see transaction: https://sepolia.etherscan.io/tx/${mintTxn.hash}`);
-      connectedContract.on("NewMintDetected", (from, tokenId) => {
-        console.log(from, tokenId.toNumber())
-        alert(`You minted to your wallet.`)
-      });
-
-      console.log("Setup event listener!")
-    } else {
-      console.log("Ethereum object doesn't exist!");
+    if (!ethereum) {
+      console.log("Ethereum object not found");
+      alert("Please install MetaMask to interact with this app.");
+      return;
     }
+
+    console.log("Ethereum object found:", ethereum);
+
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMint.abi, signer);
+
+    console.log("Contract connected:", connectedContract);
+
+    console.log("Going to pop wallet now to pay gas...");
+    let mintTxn = await connectedContract.publicMint();
+
+    console.log("Minting...please wait.");
+    await mintTxn.wait();
+
+    console.log(`Mined, see transaction: https://sepolia.etherscan.io/tx/${mintTxn.hash}`);
+
+    connectedContract.on("NewMintDetected", (from, tokenId) => {
+      console.log("New Mint Detected - From:", from, "TokenId:", tokenId.toNumber());
+      alert(`You minted to your wallet. Token ID: ${tokenId.toNumber()}`);
+    });
+
+    console.log("Setup event listener!");
   } catch (error) {
-    console.log(error)
+    console.error("Error in minting process:", error);
+    alert("An error occurred during the minting process. Check the console for details.");
   }
 }
 
