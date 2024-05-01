@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
 import OpenMint from "./abi/OpenMint.json";
-import { ethers } from "ethers";
+import { ethers, JsonRpcProvider } from "ethers";
+import OpenMintABI from "./abi/OpenMint.json";
 
 //const ethers = require("ethers")
 
 const TWITTER_HANDLE = 'proteanx';
 const TWITTER_LINK = `https://twitter.com/proteanx_`;
 const CONTRACT_ADDRESS = '0x0F50Ebb1EB98623147a5d8665f6A39f07cC22955';
+const contractABI = [
+  {
+    "inputs": [],
+    "name": "publicMint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
 
 
 const App = () => {
@@ -71,13 +81,22 @@ const askContractToMint = async () => {
 
     console.log("Ethereum object found:", ethereum);
 
+    const web3url = "https://rpc-sepolia.rockx.com";
+    //const network = "0xaa36a7";
     const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = provider.getSigner();
-    const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMint.abi, signer);
+    provider.getNetwork().then(network => console.log('Network:', network));
+
+    // Get the connected account from MetaMask
+    const accounts = await ethereum.request({ method: 'eth_accounts' });
+    console.log("Accounts:", accounts);
+    const signer = await provider.getSigner(accounts[0]);
+    console.log("Signer:", signer);
+
+    const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
 
     console.log("Contract connected:", connectedContract);
 
-    console.log("Going to pop wallet now to pay gas...");
+    //console.log("Going to pop wallet now to pay gas...");
     let mintTxn = await connectedContract.publicMint();
 
     console.log("Minting...please wait.");
@@ -85,10 +104,7 @@ const askContractToMint = async () => {
 
     console.log(`Mined, see transaction: https://sepolia.etherscan.io/tx/${mintTxn.hash}`);
 
-    connectedContract.on("NewMintDetected", (from, tokenId) => {
-      console.log("New Mint Detected - From:", from, "TokenId:", tokenId.toNumber());
-      alert(`You minted to your wallet. Token ID: ${tokenId.toNumber()}`);
-    });
+    alert(`You minted to your wallet!`);
 
     console.log("Setup event listener!");
   } catch (error) {
