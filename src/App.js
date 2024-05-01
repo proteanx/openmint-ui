@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
-import OpenMint from "./abi/OpenMint.json";
-import { ethers, JsonRpcProvider } from "ethers";
+import { ethers } from "ethers";
 import OpenMintABI from "./abi/OpenMint.json";
 
 //const ethers = require("ethers")
@@ -9,15 +8,6 @@ import OpenMintABI from "./abi/OpenMint.json";
 const TWITTER_HANDLE = 'proteanx';
 const TWITTER_LINK = `https://twitter.com/proteanx_`;
 const CONTRACT_ADDRESS = '0x0F50Ebb1EB98623147a5d8665f6A39f07cC22955';
-const contractABI = [
-  {
-    "inputs": [],
-    "name": "publicMint",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-];
 
 
 const App = () => {
@@ -81,18 +71,17 @@ const askContractToMint = async () => {
 
     console.log("Ethereum object found:", ethereum);
 
-    const web3url = "https://rpc-sepolia.rockx.com";
+    //const web3url = "https://rpc-sepolia.rockx.com";
     //const network = "0xaa36a7";
     const provider = new ethers.BrowserProvider(window.ethereum);
     provider.getNetwork().then(network => console.log('Network:', network));
 
-    // Get the connected account from MetaMask
     const accounts = await ethereum.request({ method: 'eth_accounts' });
     console.log("Accounts:", accounts);
     const signer = await provider.getSigner(accounts[0]);
     console.log("Signer:", signer);
 
-    const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
+    const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMintABI, signer);
 
     console.log("Contract connected:", connectedContract);
 
