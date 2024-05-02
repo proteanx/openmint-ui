@@ -177,6 +177,7 @@ return (
           <>
             <p className="bal-text">Your Token Balance: {tokenBalance} OpenMint <br />
             Public Mints Remaining: {mintsRemaining} mints</p>
+            <p className="acc-text">Connected to: {currentAccount}</p>
           </>
         )}
       </div>
