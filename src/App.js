@@ -13,6 +13,54 @@ const CONTRACT_ADDRESS = '0x0F50Ebb1EB98623147a5d8665f6A39f07cC22955';
 const App = () => {
 
   const [currentAccount, setCurrentAccount] = useState("");
+  const [tokenBalance, setTokenBalance] = useState("");
+  const [mintsRemaining, setMintsRemaining] = useState(0);
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+    fetchTokenBalance();
+    fetchMintsRemaining();
+
+    const interval = setInterval(() => {
+      fetchTokenBalance(); // Refresh token balance every 15 seconds
+      fetchMintsRemaining();
+    }, 15000);
+
+    return () => clearInterval(interval); // Cleanup the interval on component unmount
+  }, [currentAccount]) // Re-run the effect if currentAccount changes
+
+  const fetchTokenBalance = async () => {
+    try {
+      const { ethereum } = window;
+      if (ethereum && currentAccount) {
+        const provider = new ethers.BrowserProvider(ethereum);
+        const signer = await provider.getSigner();
+        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMintABI, signer);
+
+        let balance = await connectedContract.balanceOf(currentAccount);
+        console.log("Balance:", balance.toString());
+        setTokenBalance(balance.toString());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const fetchMintsRemaining = async () => {
+    try {
+      const { ethereum } = window;
+      if (ethereum) {
+        const provider = new ethers.BrowserProvider(ethereum);
+        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMintABI, provider);
+
+        let remaining = await connectedContract.mintsRemaining();
+        console.log("Remaining:", remaining.toString());
+        setMintsRemaining(remaining.toString());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -96,6 +144,8 @@ const askContractToMint = async () => {
     alert(`You minted to your wallet!`);
 
     console.log("Setup event listener!");
+    fetchTokenBalance();
+    fetchMintsRemaining();
   } catch (error) {
     console.error("Error in minting process:", error);
     alert("An error occurred during the minting process. Check the console for details.");
@@ -109,21 +159,26 @@ useEffect(() => {
 return (
   <div className="App">
     <div className="container">
-      <div className="header-container">
-        <p className="header gradient-text">Open Mint Dashboard</p>
+      <div className="App-header">
+        <p className="header">Open Mint Dashboard</p>
         <p className="sub-text">
           Mint your ERC20 Open Mint today
         </p>
         {currentAccount === "" ? (
-          <button onClick={connectWallet} className="cta-button connect-wallet-button">
+          <button onClick={connectWallet} className="cta-button">
             Connect to Wallet
           </button>
         ) : (
-          <button onClick={askContractToMint} className="cta-button connect-wallet-button">
+          <button onClick={askContractToMint} className="cta-button">
             Mint Tokens
           </button>
         )}
-
+        {currentAccount !== "" && (
+          <>
+            <p className="bal-text">Your Token Balance: {tokenBalance} OpenMint <br />
+            Public Mints Remaining: {mintsRemaining} mints</p>
+          </>
+        )}
       </div>
     </div>
   </div>
