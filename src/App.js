@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import './App.css';
 import { ethers } from "ethers";
 import OpenMintABI from "./abi/OpenMint.json";
+import xLogo from "./assets/logo.svg";
 
 //const ethers = require("ethers")
 
@@ -180,6 +181,16 @@ return (
             <p className="acc-text">Connected to: {currentAccount}</p>
           </>
         )}
+        <div className="footer">
+          <br />
+          <img alt="X Logo" className="x-logo" src={xLogo} />
+          <a
+            className="footer-text"
+            href={TWITTER_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >{`@${TWITTER_HANDLE}`}</a>
+        </div>
       </div>
     </div>
   </div>
