@@ -16,6 +16,7 @@ const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [tokenBalance, setTokenBalance] = useState("");
   const [mintsRemaining, setMintsRemaining] = useState(0);
+  const [network, setNetwork] = useState("");
 
   useEffect(() => {
     checkIfWalletIsConnected();
@@ -26,7 +27,8 @@ const App = () => {
       fetchTokenBalance();
       fetchMintsRemaining();
       checkIfWalletIsConnected();
-    }, 15000);
+      findNetwork();
+    }, 5000);
 
     return () => clearInterval(interval); // Cleanup the interval on component unmount
   }, [currentAccount]) // Re-run the effect if currentAccount changes
@@ -109,6 +111,15 @@ const connectWallet = async () => {
   }
 }
 
+const findNetwork = async () => {
+  const { ethereum } = window;
+  const provider = new ethers.BrowserProvider(ethereum);
+  const network = await provider.getNetwork();
+  console.log("Network:", network);
+  const chainId = network.chainId;
+  setNetwork(chainId.toString());
+}
+
 const askContractToMint = async () => {
   try {
     const { ethereum } = window;
@@ -159,6 +170,7 @@ const askContractToMint = async () => {
 
 useEffect(() => {
   checkIfWalletIsConnected();
+  findNetwork();
 }, [])
 
 return (
@@ -180,21 +192,23 @@ return (
             Connect wallet using Base Network to mint tokens
           </p>
         )}
-        {currentAccount === "" ? (
+        {network === "11155111" && currentAccount !== "" ? (
+          <button onClick={askContractToMint} className="cta-button">
+          Mint Tokens
+        </button>
+        ) : (
           <button onClick={connectWallet} className="cta-button">
             Connect to Wallet
           </button>
-        ) : (
-          <button onClick={askContractToMint} className="cta-button">
-            Mint Tokens
-          </button>
         )}
-        {currentAccount !== "" && (
+        {network === "11155111" && currentAccount !== "" ? (
           <>
+            <p className="acc-text">Connected to: {currentAccount}</p>
             <p className="bal-text">Your Token Balance: {tokenBalance} OpenMint <br />
             Public Mints Remaining: {mintsRemaining} mints</p>
-            <p className="acc-text">Connected to: {currentAccount}</p>
           </>
+        ) : (
+          <p className="acc-text">Please connect to Base Network to view data</p>
         )}
         <p> </p>
         <div className="footer">
