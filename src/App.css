@@ -25,7 +25,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: silver; /* Updated header text color to silver */
+  color: silver; 
 }
 
 .cta-button {
@@ -66,7 +66,24 @@
 }
 
 .sub-text{
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  align-items: top;
+  margin-top: -50px;
+}
+
+.sub-text2{
+  font-size: 1.2rem;
+}
+
+.explain-text{
+  font-size: 0.6rem;
+  color: #808080;
+  display: flex;
+  justify-content: center;
+  align-items: top;
+  width: 60%;
+  text-align: center;
+  padding-bottom: 10px;
 }
 
 .bal-text{

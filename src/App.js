@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
-import { ethers } from "ethers";
+import { Network, ethers } from "ethers";
 import OpenMintABI from "./abi/OpenMint.json";
 import xLogo from "./assets/logo.svg";
+import openMintLogo from "./assets/openmint.png";
 
-//const ethers = require("ethers")
 
 const TWITTER_HANDLE = 'proteanx';
 const TWITTER_LINK = `https://twitter.com/proteanx_`;
@@ -23,8 +23,9 @@ const App = () => {
     fetchMintsRemaining();
 
     const interval = setInterval(() => {
-      fetchTokenBalance(); // Refresh token balance every 15 seconds
+      fetchTokenBalance();
       fetchMintsRemaining();
+      checkIfWalletIsConnected();
     }, 15000);
 
     return () => clearInterval(interval); // Cleanup the interval on component unmount
@@ -118,10 +119,13 @@ const askContractToMint = async () => {
       return;
     }
 
+    if (ethereum.providerChainId !== "0xaa36a7") {
+      alert("Connect to base network and refresh page");
+      return;
+    }
+
     console.log("Ethereum object found:", ethereum);
 
-    //const web3url = "https://rpc-sepolia.rockx.com";
-    //const network = "0xaa36a7";
     const provider = new ethers.BrowserProvider(window.ethereum);
     provider.getNetwork().then(network => console.log('Network:', network));
 
@@ -161,10 +165,21 @@ return (
   <div className="App">
     <div className="container">
       <div className="App-header">
-        <p className="header">Open Mint Dashboard</p>
+        <img alt="OpenMint" className="open-logo" src={openMintLogo} />
         <p className="sub-text">
-          Mint your ERC20 Open Mint today
+          Welcome to OpenMint
         </p>
+        <p className="explain-text">
+          This is a proof of concept for open public token minting, similar to how
+          BRC20 & Runes work on bitcoin. There is a set mint amount and a maximum amount of 
+          mints, as well as a start and end block. Use at your own risk, this is presented without
+          warranty.
+        </p>
+        {currentAccount === "" && (
+          <p className="sub-text2">
+            Connect wallet using Base Network to mint tokens
+          </p>
+        )}
         {currentAccount === "" ? (
           <button onClick={connectWallet} className="cta-button">
             Connect to Wallet
@@ -181,8 +196,8 @@ return (
             <p className="acc-text">Connected to: {currentAccount}</p>
           </>
         )}
+        <p> </p>
         <div className="footer">
-          <br />
           <img alt="X Logo" className="x-logo" src={xLogo} />
           <a
             className="footer-text"
