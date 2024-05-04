@@ -6,8 +6,8 @@ import xLogo from "./assets/logo.svg";
 import openMintLogo from "./assets/openmint.png";
 
 
-const TWITTER_HANDLE = 'proteanx';
-const TWITTER_LINK = `https://twitter.com/proteanx_`;
+const X_USER = 'proteanx';
+const X_LINK = `https://twitter.com/proteanx_`;
 const CONTRACT_ADDRESS = '0x0F50Ebb1EB98623147a5d8665f6A39f07cC22955';
 
 
@@ -17,15 +17,21 @@ const App = () => {
   const [tokenBalance, setTokenBalance] = useState("");
   const [mintsRemaining, setMintsRemaining] = useState(0);
   const [network, setNetwork] = useState("");
+  const [contractName, setContractName] = useState("");
+  const [currentSupply, setCurrentSupply] = useState("");
+  const [mintAmount, setMintAmount] = useState("");
+  const [startBlock, setStartBlock] = useState("");
+  const [endBlock, setEndBlock] = useState("");
+  const [maxMints, setMaxMints] = useState("");
+
+
 
   useEffect(() => {
     checkIfWalletIsConnected();
-    fetchTokenBalance();
-    fetchMintsRemaining();
+    fetchContractInfo();
 
     const interval = setInterval(() => {
-      fetchTokenBalance();
-      fetchMintsRemaining();
+      fetchContractInfo();
       checkIfWalletIsConnected();
       findNetwork();
     }, 5000);
@@ -33,7 +39,7 @@ const App = () => {
     return () => clearInterval(interval); // Cleanup the interval on component unmount
   }, [currentAccount]) // Re-run the effect if currentAccount changes
 
-  const fetchTokenBalance = async () => {
+  const fetchContractInfo = async () => {
     try {
       const { ethereum } = window;
       if (ethereum && currentAccount) {
@@ -44,19 +50,24 @@ const App = () => {
         let balance = await connectedContract.balanceOf(currentAccount);
         console.log("Balance:", balance.toString());
         setTokenBalance(balance.toString());
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  const fetchMintsRemaining = async () => {
-    try {
-      const { ethereum } = window;
-      if (ethereum) {
-        const provider = new ethers.BrowserProvider(ethereum);
-        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMintABI, provider);
-
+        let contractName = await connectedContract.name();
+        console.log("Contract Name:", contractName);
+        setContractName(contractName.toString());
+        let currentSupply = await connectedContract.totalSupply();
+        console.log("Current Supply:", currentSupply.toString());
+        setCurrentSupply(currentSupply.toString());
+        let mintAmount = await connectedContract.mintAmount();
+        console.log("Mint Amount:", mintAmount.toString());
+        setMintAmount(mintAmount.toString());
+        let startBlock = await connectedContract.startBlock();
+        console.log("Start Block:", startBlock.toString());
+        setStartBlock(startBlock.toString());
+        let endBlock = await connectedContract.endBlock();
+        console.log("End Block:", endBlock.toString());
+        setEndBlock(endBlock.toString());
+        let maxMints = await connectedContract.maxMints();
+        console.log("Max Mints:", maxMints.toString());
+        setMaxMints(maxMints.toString());
         let remaining = await connectedContract.mintsRemaining();
         console.log("Remaining:", remaining.toString());
         setMintsRemaining(remaining.toString());
@@ -130,11 +141,6 @@ const askContractToMint = async () => {
       return;
     }
 
-    if (ethereum.providerChainId !== "0xaa36a7") {
-      alert("Connect to base network and refresh page");
-      return;
-    }
-
     console.log("Ethereum object found:", ethereum);
 
     const provider = new ethers.BrowserProvider(window.ethereum);
@@ -159,9 +165,7 @@ const askContractToMint = async () => {
 
     alert(`You minted to your wallet!`);
 
-    console.log("Setup event listener!");
-    fetchTokenBalance();
-    fetchMintsRemaining();
+    fetchContractInfo();
   } catch (error) {
     console.error("Error in minting process:", error);
     alert("An error occurred during the minting process. Check the console for details.");
@@ -215,10 +219,10 @@ return (
           <img alt="X Logo" className="x-logo" src={xLogo} />
           <a
             className="footer-text"
-            href={TWITTER_LINK}
+            href={X_LINK}
             target="_blank"
             rel="noreferrer"
-          >{`@${TWITTER_HANDLE}`}</a>
+          >{`@${X_USER}`}</a>
         </div>
       </div>
     </div>
