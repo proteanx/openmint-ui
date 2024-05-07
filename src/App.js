@@ -9,6 +9,7 @@ import openMintLogo from "./assets/openmint.png";
 const X_USER = 'proteanx';
 const X_LINK = `https://twitter.com/proteanx_`;
 const CONTRACT_ADDRESS = '0x0F50Ebb1EB98623147a5d8665f6A39f07cC22955';
+const NETWORK_ID = '11155111';
 
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
   const [startBlock, setStartBlock] = useState("");
   const [endBlock, setEndBlock] = useState("");
   const [maxMints, setMaxMints] = useState("");
+  const [ticker, setTicker] = useState("");
 
 
 
@@ -71,6 +73,9 @@ const App = () => {
         let remaining = await connectedContract.mintsRemaining();
         console.log("Remaining:", remaining.toString());
         setMintsRemaining(remaining.toString());
+        let ticker = await connectedContract.symbol();
+        console.log("Ticker:", ticker.toString());
+        setTicker(ticker.toString());
       }
     } catch (error) {
       console.log(error);
@@ -81,7 +86,7 @@ const App = () => {
     const { ethereum } = window;
 
     if (!ethereum) {
-        console.log("Make sure you have metamask!");
+        console.log("Make sure you have a wallet connected!");
         return;
     } else {
         console.log("We have the ethereum object", ethereum);
@@ -163,7 +168,7 @@ const askContractToMint = async () => {
 
     console.log(`Mined, see transaction: https://sepolia.etherscan.io/tx/${mintTxn.hash}`);
 
-    alert(`You minted to your wallet!`);
+    alert(`You minted ${mintAmount} tokens to your wallet!`);
 
     fetchContractInfo();
   } catch (error) {
@@ -196,7 +201,7 @@ return (
             Connect wallet using Base Network to mint tokens
           </p>
         )}
-        {network === "11155111" && currentAccount !== "" ? (
+        {network === NETWORK_ID && currentAccount !== "" ? (
           <button onClick={askContractToMint} className="cta-button">
           Mint Tokens
         </button>
@@ -205,7 +210,7 @@ return (
             Connect to Wallet
           </button>
         )}
-        {network === "11155111" && currentAccount !== "" ? (
+        {network === NETWORK_ID && currentAccount !== "" ? (
           <>
             <p className="acc-text">Connected to: {currentAccount}</p>
             <p className="bal-text">Your Token Balance: {tokenBalance} OpenMint <br />
