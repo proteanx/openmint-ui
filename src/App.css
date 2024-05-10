@@ -46,6 +46,18 @@
   padding-bottom: 30px;
 }
 
+.tokenInfo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.token-text{
+  color: white;
+  font-size: 0.7rem;
+  padding-left: 10px;
+}
+
 .x-logo{
   width: 15px;
   height: 15px;

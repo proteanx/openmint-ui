@@ -59,8 +59,9 @@ const App = () => {
         setContractName(contractName.toString());
 
         let currentSupply = await connectedContract.totalSupply();
+        const currentSupplyTokens = currentSupply.toString() / 10 ** 18;
         console.log("Current Supply:", currentSupply.toString());
-        setCurrentSupply(currentSupply.toString());
+        setCurrentSupply(currentSupplyTokens);
 
         let mintAmount = await connectedContract.mintAmount();
         const mintAmountTokens = mintAmount.toString() / 10 ** 18;
@@ -211,6 +212,18 @@ return (
             Connect wallet using Base Network to mint tokens
           </p>
         )}
+        <div className="tokenInfo">
+          {network === NETWORK_ID && currentAccount !== "" && (
+            <>
+            <p className="token-text"> TOKEN NAME <br /> {contractName} </p>
+            <p className="token-text"> MINT AMOUNT <br /> {mintAmount} {ticker}</p>
+            <p className="token-text"> START BLOCK <br /> {startBlock} </p>
+            <p className="token-text"> END BLOCK <br /> {endBlock} </p>
+            <p className="token-text"> CURRENT SUPPLY <br /> {currentSupply} {ticker} </p>
+            <p className="token-text"> MINTS LEFT <br /> {mintsRemaining} Mints </p>
+            </>
+          )}
+        </div>
         {network === NETWORK_ID && currentAccount !== "" ? (
           <button onClick={askContractToMint} className="cta-button">
           Mint Tokens
