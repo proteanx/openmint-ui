@@ -50,29 +50,39 @@ const App = () => {
         const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMintABI, signer);
 
         let balance = await connectedContract.balanceOf(currentAccount);
+        const balanceTokens = balance.toString() / 10 ** 18;
         console.log("Balance:", balance.toString());
-        setTokenBalance(balance.toString());
+        setTokenBalance(balanceTokens);
+
         let contractName = await connectedContract.name();
         console.log("Contract Name:", contractName);
         setContractName(contractName.toString());
+
         let currentSupply = await connectedContract.totalSupply();
         console.log("Current Supply:", currentSupply.toString());
         setCurrentSupply(currentSupply.toString());
+
         let mintAmount = await connectedContract.mintAmount();
-        console.log("Mint Amount:", mintAmount.toString());
-        setMintAmount(mintAmount.toString());
+        const mintAmountTokens = mintAmount.toString() / 10 ** 18;
+        console.log("Mint Amount:", mintAmountTokens);
+        setMintAmount(mintAmountTokens);
+
         let startBlock = await connectedContract.startBlock();
         console.log("Start Block:", startBlock.toString());
         setStartBlock(startBlock.toString());
+
         let endBlock = await connectedContract.endBlock();
         console.log("End Block:", endBlock.toString());
         setEndBlock(endBlock.toString());
+
         let maxMints = await connectedContract.maxMints();
         console.log("Max Mints:", maxMints.toString());
         setMaxMints(maxMints.toString());
+
         let remaining = await connectedContract.mintsRemaining();
         console.log("Remaining:", remaining.toString());
         setMintsRemaining(remaining.toString());
+        
         let ticker = await connectedContract.symbol();
         console.log("Ticker:", ticker.toString());
         setTicker(ticker.toString());
