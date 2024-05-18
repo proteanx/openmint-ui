@@ -52,8 +52,20 @@
   align-items: center;
 }
 
+.startMessage{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .token-text{
   color: white;
+  font-size: 0.7rem;
+  padding-left: 10px;
+}
+
+.start-text{
+  color: red;
   font-size: 0.7rem;
   padding-left: 10px;
 }

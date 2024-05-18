@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
-import { Network, ethers } from "ethers";
+import { ethers } from "ethers";
 import OpenMintABI from "./abi/OpenMint.json";
 import xLogo from "./assets/logo.svg";
 import openMintLogo from "./assets/openmint.png";
@@ -8,7 +8,7 @@ import openMintLogo from "./assets/openmint.png";
 
 const X_USER = 'proteanx';
 const X_LINK = `https://twitter.com/proteanx_`;
-const CONTRACT_ADDRESS = '0x0F50Ebb1EB98623147a5d8665f6A39f07cC22955';
+const CONTRACT_ADDRESS = '0x48a8cb576Ddb199C86667777EFd5344FdbcF978c';
 const NETWORK_ID = '11155111';
 
 
@@ -25,6 +25,8 @@ const App = () => {
   const [endBlock, setEndBlock] = useState("");
   const [maxMints, setMaxMints] = useState("");
   const [ticker, setTicker] = useState("");
+  const [hasStarted, setHasStarted] = useState();
+  const [blocksToGo, setBlocksToGo] = useState("");
 
 
 
@@ -87,6 +89,17 @@ const App = () => {
         let ticker = await connectedContract.symbol();
         console.log("Ticker:", ticker.toString());
         setTicker(ticker.toString());
+
+        const blockNumber = await provider.getBlockNumber();
+        console.log("Block Number:", blockNumber.toString());
+        if (blockNumber >= startBlock) {
+          setHasStarted(true);
+        } else {
+          setHasStarted(false);
+          const blocksToGo = startBlock.toString() - blockNumber.toString();
+          console.log("Blocks to go:", blocksToGo.toString());
+          setBlocksToGo(blocksToGo.toString());
+        }
       }
     } catch (error) {
       console.log(error);
@@ -177,14 +190,14 @@ const askContractToMint = async () => {
     console.log("Minting...please wait.");
     await mintTxn.wait();
 
-    console.log(`Mined, see transaction: https://sepolia.etherscan.io/tx/${mintTxn.hash}`);
+    console.log(`Minted: https://sepolia.etherscan.io/tx/${mintTxn.hash}`);
 
     alert(`You minted ${mintAmount} tokens to your wallet!`);
 
     fetchContractInfo();
   } catch (error) {
     console.error("Error in minting process:", error);
-    alert("An error occurred during the minting process. Check the console for details.");
+    alert(`An error occurred during the minting process. ${error}`);
   }
 }
 
@@ -203,7 +216,7 @@ return (
         </p>
         <p className="explain-text">
           This is a proof of concept for open public token minting, similar to how
-          BRC20 & Runes work on bitcoin. There is a set mint amount and a maximum amount of 
+          BRC20 & Runes work on bitcoin. There is a set amount per mint and a maximum amount of 
           mints, as well as a start and end block. Use at your own risk, this is presented without
           warranty.
         </p>
@@ -212,15 +225,19 @@ return (
             Connect wallet using Base Network to mint tokens
           </p>
         )}
+        <div className="startMessage">
+          {network === NETWORK_ID && hasStarted === false && (
+            <p className="start-text"> Minting has not yet started. Start block: {startBlock} <br /> Blocks until mint: {blocksToGo} </p>
+          )}
+        </div>
         <div className="tokenInfo">
-          {network === NETWORK_ID && currentAccount !== "" && (
+          {network === NETWORK_ID && hasStarted === true && (
             <>
             <p className="token-text"> TOKEN NAME <br /> {contractName} </p>
             <p className="token-text"> MINT AMOUNT <br /> {mintAmount} {ticker}</p>
-            <p className="token-text"> START BLOCK <br /> {startBlock} </p>
             <p className="token-text"> END BLOCK <br /> {endBlock} </p>
             <p className="token-text"> CURRENT SUPPLY <br /> {currentSupply} {ticker} </p>
-            <p className="token-text"> MINTS LEFT <br /> {mintsRemaining} Mints </p>
+            <p className="token-text"> MINTS LEFT <br /> {mintsRemaining}/{maxMints} </p>
             </>
           )}
         </div>
@@ -236,8 +253,7 @@ return (
         {network === NETWORK_ID && currentAccount !== "" ? (
           <>
             <p className="acc-text">Connected to: {currentAccount}</p>
-            <p className="bal-text">Your Token Balance: {tokenBalance} OpenMint <br />
-            Public Mints Remaining: {mintsRemaining} mints</p>
+            <p className="bal-text">Your Token Balance: {tokenBalance} {ticker}</p>
           </>
         ) : (
           <p className="acc-text">Please connect to Base Network to view data</p>
