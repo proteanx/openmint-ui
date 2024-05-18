@@ -79,11 +79,13 @@
 .x-logo{
   width: 15px;
   height: 15px;
+  padding-left: 10px;
 }
 
 .footer-text{
   color: white;
   font-size: 0.8rem;
+  padding-left: 3px;
 }
 
 .acc-text{

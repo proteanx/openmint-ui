@@ -5,10 +5,14 @@ import Confetti from 'react-confetti';
 import OpenMintABI from "./abi/OpenMint.json";
 import xLogo from "./assets/logo.svg";
 import openMintLogo from "./assets/openmint.png";
+import githubLogo from "./assets/github.svg";
+import farcasterLogo from "./assets/farcaster.svg";
 
 
 const X_USER = 'proteanx';
 const X_LINK = `https://twitter.com/proteanx_`;
+const GITHUB_LINK = `https://github.com/proteanx`;
+const FARCASTER_LINK = `https://warpcast.com/proteus`;
 const CONTRACT_ADDRESS = '0x48a8cb576Ddb199C86667777EFd5344FdbcF978c';
 const NETWORK_ID = '11155111';
 
@@ -275,6 +279,22 @@ return (
             target="_blank"
             rel="noreferrer"
           >{`@${X_USER}`}</a>
+
+          <img alt="GitHub Logo" className="x-logo" src={githubLogo} />
+          <a
+            className="footer-text"
+            href={GITHUB_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >{`@${X_USER}`} </a>
+
+          <img alt="Farcaster Logo" className="x-logo" src={farcasterLogo} />
+          <a
+            className="footer-text"
+            href={FARCASTER_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >{`@proteanx.eth`} </a>
         </div>
       </div>
     </div>
