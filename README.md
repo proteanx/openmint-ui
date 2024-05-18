@@ -8,10 +8,6 @@ V2 will have many additional features including automatic LP generation from min
 
 # Getting Started
 
-## Requirements
-nodejs 16.14.0 or above
-npm 8.11.0 or above
-
 ### Checkout Repo
 ```
 git clone https://github.com/proteanx/openmint-ui.git
@@ -24,7 +20,7 @@ npm install
 npm run start
 ```
 
-### Run the app - production
+### Build for production
 ```
 npm run build
 ```

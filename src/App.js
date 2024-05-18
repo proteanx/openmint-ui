@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
 import { ethers } from "ethers";
+import Confetti from 'react-confetti';
 import OpenMintABI from "./abi/OpenMint.json";
 import xLogo from "./assets/logo.svg";
 import openMintLogo from "./assets/openmint.png";
@@ -27,6 +28,8 @@ const App = () => {
   const [ticker, setTicker] = useState("");
   const [hasStarted, setHasStarted] = useState();
   const [blocksToGo, setBlocksToGo] = useState("");
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
 
 
@@ -141,9 +144,6 @@ const connectWallet = async () => {
     */
     const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 
-    /*
-    * Boom! This should print out public address once we authorize Metamask.
-    */
     console.log("Connected", accounts[0]);
     setCurrentAccount(accounts[0]); 
   } catch (error) {
@@ -184,7 +184,6 @@ const askContractToMint = async () => {
 
     console.log("Contract connected:", connectedContract);
 
-    //console.log("Going to pop wallet now to pay gas...");
     let mintTxn = await connectedContract.publicMint();
 
     console.log("Minting...please wait.");
@@ -192,9 +191,14 @@ const askContractToMint = async () => {
 
     console.log(`Minted: https://sepolia.etherscan.io/tx/${mintTxn.hash}`);
 
-    alert(`You minted ${mintAmount} tokens to your wallet!`);
+    setSuccessMessage(`You minted ${mintAmount} tokens to your wallet! 🎉🎉`);
+    setShowConfetti(true);
+   
+       setTimeout(() => {
+         setShowConfetti(false);
+         setSuccessMessage("");
+       }, 6900);
 
-    fetchContractInfo();
   } catch (error) {
     console.error("Error in minting process:", error);
     alert(`An error occurred during the minting process. ${error}`);
@@ -210,6 +214,10 @@ return (
   <div className="App">
     <div className="container">
       <div className="App-header">
+      {showConfetti && <Confetti />}
+      {successMessage && (
+             <div className="success-message">{successMessage}</div>
+           )}
         <img alt="OpenMint" className="open-logo" src={openMintLogo} />
         <p className="sub-text">
           Welcome to OpenMint

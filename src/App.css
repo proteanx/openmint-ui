@@ -70,6 +70,12 @@
   padding-left: 10px;
 }
 
+.success-message{
+  color: green;
+  font-size: 0.7rem;
+  padding-left: 10px;
+}
+
 .x-logo{
   width: 15px;
   height: 15px;
