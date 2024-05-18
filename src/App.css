@@ -70,10 +70,17 @@
   padding-left: 10px;
 }
 
-.success-message{
-  color: green;
-  font-size: 0.7rem;
-  padding-left: 10px;
+.success-message {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  text-align: center;
+  a {
+    color: #ff6600;
+  }
 }
 
 .x-logo{

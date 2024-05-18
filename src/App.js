@@ -34,6 +34,7 @@ const App = () => {
   const [blocksToGo, setBlocksToGo] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [exploreLink, setExploreLink] = useState("");
 
 
 
@@ -60,51 +61,51 @@ const App = () => {
 
         let balance = await connectedContract.balanceOf(currentAccount);
         const balanceTokens = balance.toString() / 10 ** 18;
-        console.log("Balance:", balance.toString());
+        //console.log("Balance:", balance.toString());
         setTokenBalance(balanceTokens);
 
         let contractName = await connectedContract.name();
-        console.log("Contract Name:", contractName);
+        //console.log("Contract Name:", contractName);
         setContractName(contractName.toString());
 
         let currentSupply = await connectedContract.totalSupply();
         const currentSupplyTokens = currentSupply.toString() / 10 ** 18;
-        console.log("Current Supply:", currentSupply.toString());
+        //console.log("Current Supply:", currentSupply.toString());
         setCurrentSupply(currentSupplyTokens);
 
         let mintAmount = await connectedContract.mintAmount();
         const mintAmountTokens = mintAmount.toString() / 10 ** 18;
-        console.log("Mint Amount:", mintAmountTokens);
+        //console.log("Mint Amount:", mintAmountTokens);
         setMintAmount(mintAmountTokens);
 
         let startBlock = await connectedContract.startBlock();
-        console.log("Start Block:", startBlock.toString());
+        //console.log("Start Block:", startBlock.toString());
         setStartBlock(startBlock.toString());
 
         let endBlock = await connectedContract.endBlock();
-        console.log("End Block:", endBlock.toString());
+        //console.log("End Block:", endBlock.toString());
         setEndBlock(endBlock.toString());
 
         let maxMints = await connectedContract.maxMints();
-        console.log("Max Mints:", maxMints.toString());
+        //console.log("Max Mints:", maxMints.toString());
         setMaxMints(maxMints.toString());
 
         let remaining = await connectedContract.mintsRemaining();
-        console.log("Remaining:", remaining.toString());
+        //console.log("Remaining:", remaining.toString());
         setMintsRemaining(remaining.toString());
         
         let ticker = await connectedContract.symbol();
-        console.log("Ticker:", ticker.toString());
+        //console.log("Ticker:", ticker.toString());
         setTicker(ticker.toString());
 
         const blockNumber = await provider.getBlockNumber();
-        console.log("Block Number:", blockNumber.toString());
+        //console.log("Block Number:", blockNumber.toString());
         if (blockNumber >= startBlock) {
           setHasStarted(true);
         } else {
           setHasStarted(false);
           const blocksToGo = startBlock.toString() - blockNumber.toString();
-          console.log("Blocks to go:", blocksToGo.toString());
+          //console.log("Blocks to go:", blocksToGo.toString());
           setBlocksToGo(blocksToGo.toString());
         }
       }
@@ -120,14 +121,14 @@ const App = () => {
         console.log("Make sure you have a wallet connected!");
         return;
     } else {
-        console.log("We have the ethereum object", ethereum);
+        //console.log("We have the ethereum object", ethereum);
     }
 
     const accounts = await ethereum.request({ method: 'eth_accounts' });
 
     if (accounts.length !== 0) {
         const account = accounts[0];
-        console.log("Found an authorized account:", account);
+        //console.log("Found an authorized account:", account);
         setCurrentAccount(account)
     } else {
         console.log("No authorized account found")
@@ -139,7 +140,7 @@ const connectWallet = async () => {
     const { ethereum } = window;
 
     if (!ethereum) {
-      alert("Get MetaMask!");
+      alert("Please install an EVM wallet to interact with this app.");
       return;
     }
 
@@ -148,7 +149,7 @@ const connectWallet = async () => {
     */
     const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 
-    console.log("Connected", accounts[0]);
+    //console.log("Connected", accounts[0]);
     setCurrentAccount(accounts[0]); 
   } catch (error) {
     console.log(error)
@@ -159,7 +160,7 @@ const findNetwork = async () => {
   const { ethereum } = window;
   const provider = new ethers.BrowserProvider(ethereum);
   const network = await provider.getNetwork();
-  console.log("Network:", network);
+  //console.log("Network:", network);
   const chainId = network.chainId;
   setNetwork(chainId.toString());
 }
@@ -170,38 +171,40 @@ const askContractToMint = async () => {
 
     if (!ethereum) {
       console.log("Ethereum object not found");
-      alert("Please install MetaMask to interact with this app.");
+      alert("Please install an EVM wallet to interact with this app.");
       return;
     }
 
-    console.log("Ethereum object found:", ethereum);
+    //console.log("Ethereum object found:", ethereum);
 
     const provider = new ethers.BrowserProvider(window.ethereum);
     provider.getNetwork().then(network => console.log('Network:', network));
 
     const accounts = await ethereum.request({ method: 'eth_accounts' });
-    console.log("Accounts:", accounts);
+    //console.log("Accounts:", accounts);
     const signer = await provider.getSigner(accounts[0]);
-    console.log("Signer:", signer);
+    //console.log("Signer:", signer);
 
     const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, OpenMintABI, signer);
 
-    console.log("Contract connected:", connectedContract);
+    //console.log("Contract connected:", connectedContract);
 
     let mintTxn = await connectedContract.publicMint();
 
-    console.log("Minting...please wait.");
+    //console.log("Minting...please wait.");
     await mintTxn.wait();
 
-    console.log(`Minted: https://sepolia.etherscan.io/tx/${mintTxn.hash}`);
+    //console.log(`Minted: https://basescan.org/tx/${mintTxn.hash}`);
 
     setSuccessMessage(`You minted ${mintAmount} tokens to your wallet! 🎉🎉`);
     setShowConfetti(true);
+    setExploreLink(`https://basescan.org/tx/${mintTxn.hash}`);
    
        setTimeout(() => {
          setShowConfetti(false);
          setSuccessMessage("");
-       }, 6900);
+         setExploreLink("");
+       }, 5069);
 
   } catch (error) {
     console.error("Error in minting process:", error);
@@ -220,7 +223,7 @@ return (
       <div className="App-header">
       {showConfetti && <Confetti />}
       {successMessage && (
-             <div className="success-message">{successMessage}</div>
+             <div className="success-message">{successMessage} <br /> <a href={exploreLink} target="_blank" rel="noreferrer">Check on Explorer</a></div>
            )}
         <img alt="OpenMint" className="open-logo" src={openMintLogo} />
         <p className="sub-text">
@@ -229,8 +232,8 @@ return (
         <p className="explain-text">
           This is a proof of concept for open public token minting, similar to how
           BRC20 & Runes work on bitcoin. There is a set amount per mint and a maximum amount of 
-          mints, as well as a start and end block. Use at your own risk, this is presented without
-          warranty.
+          mints, as well as a start and end block. Use at your own risk, this interface and underlying 
+          contracts are open source and presented without warranty.
         </p>
         {currentAccount === "" && (
           <p className="sub-text2">
