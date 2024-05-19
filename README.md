@@ -24,3 +24,7 @@ npm run start
 ```
 npm run build
 ```
+
+### Open Mint Contracts
+
+The contract is open source and available on github [here](https://github.com/proteanx/openmint-contracts)
