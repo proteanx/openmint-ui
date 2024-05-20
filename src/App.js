@@ -13,8 +13,8 @@ const X_USER = 'proteanx';
 const X_LINK = `https://twitter.com/proteanx_`;
 const GITHUB_LINK = `https://github.com/proteanx`;
 const FARCASTER_LINK = `https://warpcast.com/proteus`;
-const CONTRACT_ADDRESS = '0xcF852B08F54407a0a54aC66D146Ea8711824Ce28';
-const NETWORK_ID = '11155111';
+const CONTRACT_ADDRESS = '0x9B4893F07d9e20a26b524853D6eD1DBf9679e147';
+const NETWORK_ID = '8453';
 
 
 const App = () => {
