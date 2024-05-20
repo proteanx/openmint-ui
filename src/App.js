@@ -220,7 +220,7 @@ useEffect(() => {
 return (
   <div className="App">
     <div className="container">
-      <div className="App-header">
+      <div className="App-content">
       {showConfetti && <Confetti />}
       {successMessage && (
              <div className="success-message">{successMessage} <br /> <a href={exploreLink} target="_blank" rel="noreferrer">Check on Explorer</a></div>
