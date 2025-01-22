@@ -1,0 +1,4 @@
+
+
+export const NETWORK_ID = '11155111';
+export const CONTRACT_ADDRESS = '0xa3E07B6b790D2B80cbdc1b0780714676eCc9d919';
